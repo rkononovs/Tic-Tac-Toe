@@ -29,13 +29,13 @@ void printWelcomeScreen(){
 	cout << " 		|_|    |_____|  \\_____|     |_| /_/    \\_\\ \\_____|     |_|    \\____/  |______|" << endl;
 	cout << "\n\n";
 
-	cout << "Options: " << endl;
-	cout <<"To play - Player vs. Player - type 'PvP'" << endl; 
-	cout <<"To play - Player vs. AI - type 'PvE'" << endl;
 };
 
 void printOptions() {
 
+	cout << "Options: " << endl;
+	cout << "To play - Player vs. Player - type 'PvP'" << endl;
+	cout << "To play - Player vs. AI - type 'PvE'" << endl;
 };
 
 void resetBoard() { // Reset boards fields
@@ -74,6 +74,8 @@ bool setBoard(int iX, int iY, char cCharValue) { // Give option to change boards
 		return true; 
 	} 
 	else { 
+		cout << "This field is already occupied." << endl;
+		cout << "Try other position.\n" << endl;
 		return false; 
 	} 
 }
@@ -113,23 +115,41 @@ void getUserInput() {
 		break;
 	default:
 		cout << "Your input is not an option!" << endl;
+		cout << "Try another input!\n" << endl;
 		break;
 	}
 
 	changePlayer();
 };
 
-bool checkIfPlayerHasWon() {
-	return true;
+bool checkIfPlayerXHasWon() { // Check if win condition is met
+	int iHorizontal = 0;
+
+	for (int i = 0; i < 3; i++) { // Check if Horizontal win condition is met
+		if (g_acBoard[0][i] == 'X') {
+			iHorizontal++;
+		}
+	}
+	if (iHorizontal == 3) {
+		 return true;
+	}
+
+	return false;
 };
 
 
 int main() {
 	string uInput;
-	bool bPlayerHasWon = false;
+	bool bPlayerXHasWon = false;
 	while (1) {
 		printBoard();
 		getUserInput();
+		bPlayerXHasWon = checkIfPlayerXHasWon();
+		if (bPlayerXHasWon == true) {
+			printBoard();
+			cout << "Player 'X' has won!" << endl;
+			break;
+		}
 	}
 
 	return 0;
