@@ -3,14 +3,13 @@
 //TODO Add menu
 //TODO Add game loop
 //TODO Add menu loop
-//TODO Fix a bug when player is changed when inputing occupied field
-//TODO Fix a bug when turn is incrimented when inputing occupied field  
 //Extra
 //TODO Add AI to fight with
-//TODO Make Easy AI(Random) and Impossible AI(Strategic)
+//TODO Make Easy AI(Random) 
+//TODO Make Impossible AI(Strategic)
 
 #include <iostream>
-#include <string>
+#include <string>/
 #include <cctype>
 
 using std::cout;
@@ -21,6 +20,7 @@ using std::string;
 const int g_kiSize = 3; // Define board size
 char g_acBoard[g_kiSize][g_kiSize] = { { '1', '2', '3' },{ '4', '5', '6' },{ '7', '8', '9' } }; // Define boards fields
 char g_cPlayer = 'X'; // Define current player
+void getUserInput();
 
 void printWelcomeScreen(){
 	cout << "\n"; // ASCII art for tic-tac-toe game name
@@ -62,6 +62,7 @@ void printBoard() {
 		cout << "+---+---+---+" << endl;
 	} 
 };
+
 void changePlayer() {
 	if (g_cPlayer == 'X') {
 		g_cPlayer = 'O';
@@ -76,23 +77,22 @@ bool setBoard(int iX, int iY, char cCharValue) { // Give option to change boards
 		g_acBoard[iX][iY] = cCharValue;
 		return true; 
 	} 
-	else { 
+	else { // Else indicate that field is taken and request input again!
 		cout << "This field is already occupied." << endl;
 		cout << "Try other position.\n" << endl;
-		return false; 
-	} 
+		getUserInput();
+	}
 }
 
 void getUserInput() {
-	char iInput;
+	char cInput;
 
 
 	cout << "It is " << g_cPlayer << " turn." << endl;
 	cout << "Enter number that indicates position: ";
-	cin >> iInput;
+	cin >> cInput;
 	cout << endl;
-
-	switch (iInput)
+	switch (cInput)
 	{
 	case '1':
 		setBoard(0, 0, g_cPlayer);
@@ -124,6 +124,7 @@ void getUserInput() {
 	default:
 		cout << "Your input is not an option!" << endl;
 		cout << "Try another input!\n" << endl;
+		getUserInput();
 		break;
 	}
 };
