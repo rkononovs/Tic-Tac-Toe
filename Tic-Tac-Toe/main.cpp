@@ -1,26 +1,22 @@
-// My Tic-Tac-Toe game
-// Core
-//TODO Add menu
-//TODO Add game loop
-//TODO Add menu loop
-//Extra
-//TODO Add AI to fight with
-//TODO Make Easy AI(Random) 
-//TODO Make Impossible AI(Strategic)
+/* 
+My Tic-Tac-Toe that was part of Intruduction to C++ coursework
+Completed in 08/12/2019
+This program can take input from user and change fields in array.
+This program checks win conditions and ensures that input is correct.
+This program implements basic functions and passing by reference as well as arrays and I/O.
+*/
 
 #include <iostream>
-#include <string>/
 #include <cctype>
 
 using std::cout;
 using std::cin;
 using std::endl;
-using std::string;
 
 const int g_kiSize = 3; // Define board size
 char g_acBoard[g_kiSize][g_kiSize] = { { '1', '2', '3' },{ '4', '5', '6' },{ '7', '8', '9' } }; // Define boards fields
 char g_cPlayer = 'X'; // Define current player
-void getUserInput();
+void getUserPositionInput();
 
 void printWelcomeScreen(){
 	cout << "\n"; // ASCII art for tic-tac-toe game name
@@ -34,65 +30,57 @@ void printWelcomeScreen(){
 
 };
 
-void printOptions() {
-
-	cout << "Options: " << endl;
-	cout << "To play - Player vs. Player - type 'PvP'" << endl;
-	cout << "To play - Player vs. AI - type 'PvE'" << endl;
-};
-
 void resetBoard() { // Reset boards fields
 	int iPosition = 0;
 	for (int i = 0; i < g_kiSize; i++) {
 		for (int j = 0; j < g_kiSize; j++) {
-			iPosition++;
+			iPosition++; // Move to the next position
 			char cPosition = '0' + iPosition; // Make integer a character
-			g_acBoard[i][j] = cPosition;
+			g_acBoard[i][j] = cPosition; // Asign a number to a related field
 		}
 	}
 };
 
 void printBoard() { 
-	cout << "+---+---+---+" << endl;
+	cout << "+---+---+---+" << endl; // Print upper side of the board
 	for (int i = 0; i < g_kiSize; i++) {
 		for (int j = 0; j < g_kiSize; j++) {
-			cout << "| " << g_acBoard[i][j] << " ";
+			cout << "| " << g_acBoard[i][j] << " "; // Print Sides and spaces in between
 		} 
-		cout << "| " << endl;
-		cout << "+---+---+---+" << endl;
+		cout << "| " << endl; // Print ending sides
+		cout << "+---+---+---+" << endl; // Print lines
 	} 
 };
 
 void changePlayer() {
-	if (g_cPlayer == 'X') {
+	if (g_cPlayer == 'X') { // Change X to O
 		g_cPlayer = 'O';
 	}
-	else {
+	else { // Change O to X
 		g_cPlayer = 'X';
 	}
 }
 
 bool setBoard(int iX, int iY, char cCharValue) { // Give option to change boards fields
 	if (isdigit(g_acBoard[iX][iY])) {   // Check whether field is digit i.e. if field is not taken
-		g_acBoard[iX][iY] = cCharValue;
+		g_acBoard[iX][iY] = cCharValue; // Add assigned character( X or O ) to choosen field position
 		return true; 
 	} 
 	else { // Else indicate that field is taken and request input again!
 		cout << "This field is already occupied." << endl;
 		cout << "Try other position.\n" << endl;
-		getUserInput();
+		getUserPositionInput();
 	}
 }
 
-void getUserInput() {
+void getUserPositionInput() {
 	char cInput;
-
 
 	cout << "It is " << g_cPlayer << " turn." << endl;
 	cout << "Enter number that indicates position: ";
 	cin >> cInput;
 	cout << endl;
-	switch (cInput)
+	switch (cInput) // Set user input to field 
 	{
 	case '1':
 		setBoard(0, 0, g_cPlayer);
@@ -121,13 +109,32 @@ void getUserInput() {
 	case '9':
 		setBoard(2, 2, g_cPlayer);
 		break;
-	default:
+	default: // if input is above 9 ask again for input
 		cout << "Your input is not an option!" << endl;
 		cout << "Try another input!\n" << endl;
-		getUserInput();
+		getUserPositionInput();
 		break;
 	}
 };
+
+void getUserExitInput(bool& exit) {
+	char cInput; // define input
+	while (true) {
+		cin >> cInput; // input a character
+		if ((cInput == 'y') || (cInput == 'Y')) { // if input is either y or Y then reset board and start new game
+			resetBoard();
+			exit = true;
+			break;
+		}
+		else if ((cInput == 'n') || (cInput == 'N')) {  // if input is either y or Y then exit the game
+			exit = false;
+			break;
+		}
+		else { // if input is not y,Y or n,N then ask again for input.
+			cout << "Wrong input! Try again." << endl;
+		}
+	}
+}
 
 bool playerXHasWon() { // Check if win condition is met
 	int iHorizontalX = 0; // How many X are in one row
@@ -268,30 +275,36 @@ bool playerOHasWon() { // Check if win condition is met
 };
 
 int main() {
-	string uInput;
 	int iTurn = 0; // Turns taken
+	bool bPlayAgain = true;
 
 	printWelcomeScreen();
-	while (true) {
+	while (bPlayAgain) {
 		printBoard();
-		getUserInput();
-		iTurn++;
+		getUserPositionInput();
+		iTurn++; // Increment how many turns were played
 		changePlayer();
 
 		if (playerXHasWon() == true) {
 			printBoard();
-			cout << "Player 'X' has won!" << endl;
-			break;
+			cout << "Player 'X' has won!\n" << endl;
+			cout << "Do you want to start new game? Type y/n" << endl;
+			getUserExitInput(bPlayAgain); // When game won check if player wants to play again
+			iTurn = 0; // Reset turns
 		}
 		else if (playerOHasWon() == true) {
 			printBoard();
-			cout << "Player 'O' has won!" << endl;
-			break;
+			cout << "Player 'O' has won!\n" << endl;
+			cout << "Do you want to start new game? Type y/n" << endl;
+			getUserExitInput(bPlayAgain);
+			iTurn = 0; // Reset turns
 		}
-		else if (iTurn == 9) { // If noone won and there were 9 turns it is a draw.
+		else if (iTurn == 9) { // If no one won and there were 9 turns it is a draw.
 			printBoard();
-			cout << "It's a draw!" << endl;
-			break;
+			cout << "It's a draw!\n" << endl;
+			cout << "Do you want to start new game? Type y/n" << endl;
+			getUserExitInput(bPlayAgain); // When game won check if player wants to play again
+			iTurn = 0; // Reset turns
 		}
 	}
 
